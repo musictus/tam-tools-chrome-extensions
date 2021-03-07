@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Number Cleaner</title>
+        <script src="jquery-3.5.1.min.js"></script>
+        <script src="popup.js"></script>
+    </head>
+    <body>
+        <h2>Number Cleaner 🧹</h2>
+        <h4>
+            <form>
+                <input type="button" id="grab_did" value="☎️  Grab DIDs"/>
+            </form><br>
+            <form>
+                <label for="number_cleaner">Enter DIDs (separated by new lines)</label><br>
+                <textarea id="number_input" rows="7" cols="30"></textarea><br>
+                <input type="button" id="cleanit" value="🧹 Clean it!"/>
+                <input type="button" id="copy1" value="📋 Copy"/><br>
+              </form><br>
+              <form>
+                <label for="add_prefix">Prefix</label><br>
+                <textarea id="prefix_input" rows="1" cols="7"></textarea>
+                <input type="button" id="add_prefix" value="Add Prefix"/><br><br>
+                <h5>❗️ Caution: this is a cleaner, not an auto formatter</h5>
+            </form><br>
+            <form>
+                <input type="button" id="save" value="💾 SAVE"/>
+                <input type="button" id="clear" value="🧽 CLEAR"/><br>
+            </form><br>
+            <h5 id="how_many"></h5>
+        </h4>
+    </body>
+</html>

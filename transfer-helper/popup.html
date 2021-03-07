@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Transfer Helper</title>
+        <script src="jquery-3.5.1.min.js"></script>
+        <script src="popup.js"></script>
+    </head>
+    <body>
+        <h6>
+            <form>
+                <input type="button" id="grab_did" value="☎️  Grab DIDs"/>
+                <input type="button" id="cleanit" value="🧹  Clean DIDs"/>
+                <input type="button" id="copy1" value="📋 Copy"/>
+            </form><br>
+            <form>
+                <textarea id="number_input" rows="3" cols="17" placeholder="or Enter DIDs (separated by new lines)"></textarea>
+                <textarea id="prefix_input" rows="1" cols="7" placeholder="Prefix"></textarea>
+                <input type="button" id="add_prefix" value="Add Prefix"/>
+            </form><br>
+            <form>
+                <input type="button" id="grab_reg" value="🔍  Grab SIDs"/><br>
+                <label for="enter_from">From AC</label><br>
+                <textarea id="from_result" rows="3" cols="40"></textarea><br>
+                <label for="enter_to">To AC</label><br>
+                <textarea id="to_result" rows="3" cols="40"></textarea><br>
+                <label for="enter_bu">BU</label><br>
+                <textarea id="bu_result" rows="2" cols="40"></textarea><br>
+                <label for="enter_ad">AD</label><br>
+                <textarea id="ad_result" rows="2" cols="40"></textarea><br>
+                <input type="button" id="save" value="💾 SAVE"/>
+                <input type="button" id="clear" value="🧽 CLEAR"/><br>
+            </form><br>
+                <input type="button" id="open_transfer" value="🙉 Open"/>
+                <input type="button" id="insert" value="✏️ Insert"/>
+                <input type="button" id="gsheet" value="➡️ GSheet"/>
+                <textarea id="zd_id" rows="1" cols="8" placeholder="Zendesk ID"></textarea>
+        </h6>
+        <h6 id="how_many"></h6>
+    </body>
+</html>
