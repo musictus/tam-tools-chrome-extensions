@@ -115,7 +115,7 @@ $(function(){
                     sidResult.push($.trim(textAreaValue[i]));
                     chrome.tabs.create({
                         url:"https://voice-insights6.us1.eak.twilio.com/app/kibana#/discover?_g=(refreshInterval:(pause:!t,value:0),time:(from:now-30d,to:now))&_a=(columns:!(_source),index:e6754050-0a40-11ea-98d5-23817bb73bfe,interval:auto,query:(language:kuery,query:" + sidResult[i] + "),sort:!('@timestamp',desc))",
-                        selected:false  // We open the tab in the background
+                        selected:false
                         })
                     }
                 }
@@ -123,7 +123,7 @@ $(function(){
                 for (var i = 0; i < sidResult.length; i++) {
                     chrome.tabs.create({
                         url:"https://voice-insights6.us1.eak.twilio.com/app/kibana#/discover?_g=(refreshInterval:(pause:!t,value:0),time:(from:now-30d,to:now))&_a=(columns:!(_source),index:e6754050-0a40-11ea-98d5-23817bb73bfe,interval:auto,query:(language:kuery,query:" + sidResult[i] + "),sort:!('@timestamp',desc))",
-                        selected:false  // We open the tab in the background
+                        selected:false
                         })
                     }
                 }
@@ -134,12 +134,12 @@ $(function(){
             if (found.type === 'CA') {
                 chrome.tabs.create({
                     url:"https://monkey.twilio.com/cops-dashboard/#/voice/query-sids",
-                    selected: false  // We open the tab in the background
+                    selected: false
                     })
                 } else if (found.type === 'SM'){                
                         chrome.tabs.create({
                             url:"https://monkey.twilio.com/cops-dashboard/#/messaging/query-sids",
-                            selected: false  // We open the tab in the background
+                            selected: false
                             })
                     } else {
                         clearHowMany();
