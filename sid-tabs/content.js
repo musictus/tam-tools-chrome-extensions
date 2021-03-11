@@ -14,8 +14,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
             let search = document.body.innerText;
             let array = [...search.matchAll(regexp)];
             let newArray = array.map(i => 'SM' + i);
-            let removeDupes = [...new Set(newArray)];   
-         
+            let removeDupes = [...new Set(newArray)];
             chrome.runtime.sendMessage(removeDupes);
 
         } else if (request.findSids == "regSids"){
@@ -55,5 +54,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
             ad()
             ac()
             all()
-    }
-});
+
+            } else if (request.findSids == "insert_CA") {
+                chrome.storage.local.get(['sid'],function(add){
+                console.log("CA working! test: " + add.sid)
+                document.getElementsByClassName("form-control ng-pristine ng-valid ng-empty ng-touched")[0].value = add.sid;            
+                    });
+                } else if (request.findSids == "insert_SM") {
+                    chrome.storage.local.get(['sid'],function(add){
+                    console.log("SM working! test: " + add.sid)
+                    document.getElementsByClassName("form-control ng-pristine ng-valid ng-empty ng-touched")[0].value = add.sid;            
+                        });
+                    }
+    });

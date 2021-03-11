@@ -1,12 +1,26 @@
 $(function(){
-    chrome.storage.local.get(['sid'],function(found){
+
+    let sidResult = [];
+    let savedSidResult = '';
+    let saved = false;
+    let requestType = '';
+
+    // get data from storage on initial load
+    chrome.storage.local.get(['sid', 'type'],function(found){
         $('#sid_result').val(found.sid);
+        found.type = requestType;
     });
 
-    $('#grab_ca').click(function(){  
+    // grab related clicks
+    $('#grab_ca').click(function(){
         clearCache();    
         chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
            chrome.tabs.sendMessage(tabs[0].id, {findSids: "callSids"});
+            });
+        // save request type
+        requestType = 'CA';
+        chrome.storage.local.set({'type': requestType}, function() {     
+            console.log("saved request type " + requestType)
             });
         });
 
@@ -15,6 +29,11 @@ $(function(){
         chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
         chrome.tabs.sendMessage(tabs[0].id, {findSids: "msgSids"});
             });
+        // save request type
+        requestType = 'SM';
+        chrome.storage.local.set({'type': requestType}, function() {     
+            console.log("saved request type " + requestType)
+            });
         });
 
     $('#grab_reg').click(function(){  
@@ -22,37 +41,32 @@ $(function(){
         chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
         chrome.tabs.sendMessage(tabs[0].id, {findSids: "regSids"});
             });
+        // save request type
+        requestType = '';
+        chrome.storage.local.set({'type': requestType}, function() {     
+            console.log("saved request type " + requestType)
+            });
         });
 
     $('#copy1').click(function(){
             $('#sid_result').select();
             document.execCommand('copy');
         });
-    
-    let sidResult = [];
-    let savedSidResult = "";
-    let saved = false;
 
     $('#open_tab').click(function(){
-        if (saved === true) {
-            let textAreaValue = $('#sid_result').val().split(/\n/);
-            for (var i=0; i < textAreaValue.length; i++) {
-                if (/\S/.test(textAreaValue[i])) {
-                    sidResult.push($.trim(textAreaValue[i]));
-                    chrome.tabs.create({
-                        url:"https://monkey.twilio.com/search?q=" + sidResult[i],
-                        selected: false  // We open the tab in the background
-                        })
-                    }
-                }
-            } else {
-                for (var i = 0; i < sidResult.length; i++) {
-                    chrome.tabs.create({
-                        url:"https://monkey.twilio.com/search?q=" + sidResult[i],
-                        selected: false  // We open the tab in the background
-                        })
-                    }
-                }
+            let textAreaValue = $('#sid_result').val();
+            let valueToArr = textAreaValue.split(/\n/)
+            chrome.storage.local.set({'sid': textAreaValue}, function(){ console.log("saved whilte opening Tab! " + textAreaValue)});     
+                    
+                    for (var i=0; i < valueToArr.length; i++) {
+                        if (/\S/.test(valueToArr[i])) {
+                            sidResult.push($.trim(valueToArr[i]));
+                            chrome.tabs.create({
+                                url:"https://monkey.twilio.com/search?q=" + sidResult[i],
+                                selected: false  // We open the tab in the background
+                                })
+                            }
+                        }
         });
     
     $('#save').click(function(){  
@@ -63,6 +77,36 @@ $(function(){
         clearCache()
         });
     
+    $('#kibana').click(function(){
+        let textAreaValue = $('#sid_result').val();
+        let valueToArr = textAreaValue.split(/\n/)
+        chrome.storage.local.set({'sid': textAreaValue}, function(){ console.log("saved while opening Kibana! " + textAreaValue)});
+
+        chrome.storage.local.get(['type'],function(found){
+            if (found.type === 'CA') {
+                for (var i = 0; i < valueToArr.length; i++) {
+                    if (/\S/.test(valueToArr[i])) {
+                        sidResult.push($.trim(valueToArr[i]));
+                        chrome.tabs.create({
+                            url:"https://voice-insights6.us1.eak.twilio.com/app/kibana#/discover?_g=(refreshInterval:(pause:!t,value:0),time:(from:now-30d,to:now))&_a=(columns:!(_source),index:e6754050-0a40-11ea-98d5-23817bb73bfe,interval:auto,query:(language:kuery,query:" + sidResult[i] + "),sort:!('@timestamp',desc))",
+                            selected: false
+                            })
+                        }
+                    }
+            } else if (found.type === 'SM') {
+                for (var i = 0; i < valueToArr.length; i++) {
+                    if (/\S/.test(valueToArr[i])) {
+                        sidResult.push($.trim(valueToArr[i]));
+                        chrome.tabs.create({
+                            url:"https://messaging-es.us1.twilio.com/app/kibana#/discover?_g=(refreshInterval:(pause:!t,value:0),time:(from:now-30d,mode:quick,to:now))&_a=(columns:!(_source),index:e47f5980-47a4-11e8-b508-037649b93398,interval:auto,query:(language:lucene,query:" + sidResult[i] + "),sort:!(timestamp,desc))",
+                            selected: false 
+                            })
+                        }
+                    }
+                }
+            })
+        });
+
     $('#ca_kibana').click(function(){
         if (saved === true) {
             let textAreaValue = $('#sid_result').val().split(/\n/);
@@ -85,28 +129,40 @@ $(function(){
                 }
         });
     
-        
-    $('#sm_kibana').click(function(){
-        if (saved === true) {
-            let textAreaValue = $('#sid_result').val().split(/\n/);
-            for (var i=0; i < textAreaValue.length; i++) {
-                if (/\S/.test(textAreaValue[i])) {
-                    sidResult.push($.trim(textAreaValue[i]));
-                    chrome.tabs.create({
-                        url:"https://messaging-es.us1.twilio.com/app/kibana#/discover?_g=(refreshInterval:(pause:!t,value:0),time:(from:now-30d,mode:quick,to:now))&_a=(columns:!(_source),index:e47f5980-47a4-11e8-b508-037649b93398,interval:auto,query:(language:lucene,query:" + sidResult[i] + "),sort:!(timestamp,desc))",
-                        selected:false  // We open the tab in the background
-                        })
-                    }
-                }
-            } else {
-                for (var i = 0; i < sidResult.length; i++) {
-                    chrome.tabs.create({
-                        url:"https://messaging-es.us1.twilio.com/app/kibana#/discover?_g=(refreshInterval:(pause:!t,value:0),time:(from:now-30d,mode:quick,to:now))&_a=(columns:!(_source),index:e47f5980-47a4-11e8-b508-037649b93398,interval:auto,query:(language:lucene,query:" + sidResult[i] + "),sort:!(timestamp,desc))",
-                        selected:false  // We open the tab in the background
-                        })
-                    }
-                }
+    $('#open_cops').click(function(){
+        chrome.storage.local.get(['type'],function(found){
+            if (found.type === 'CA') {
+                chrome.tabs.create({
+                    url:"https://monkey.twilio.com/cops-dashboard/#/voice/query-sids",
+                    selected: false  // We open the tab in the background
+                    })
+                } else if (found.type === 'SM'){                
+                        chrome.tabs.create({
+                            url:"https://monkey.twilio.com/cops-dashboard/#/messaging/query-sids",
+                            selected: false  // We open the tab in the background
+                            })
+                    } else {
+                        clearHowMany();
+                        $('#how_many').append($('<span id="temp">').text("❗️ Grab CA or SM"));
+                        }
+            })
         });
+
+        $('#insert').click(function(){  
+            chrome.storage.local.get(['type'],function(found){
+                if (found.type === 'CA') {
+                    console.log("CA working on pop!");
+                    chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
+                        chrome.tabs.sendMessage(tabs[0].id, {findSids: "insert_CA"});
+                        });
+                } else if (found.type === 'SM') {
+                        console.log("SM working on pop!")
+                        chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
+                            chrome.tabs.sendMessage(tabs[0].id, {findSids: "insert_SM"});
+                            });
+                        }
+                    })
+            });
 
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
         if (request.finally == "the sids!"){
@@ -133,14 +189,17 @@ $(function(){
         const save = function() {
             saved = true;
             savedSidResult = $('#sid_result').val();
-            console.log("saveddddd " + savedSidResult);
             chrome.storage.local.set({'sid': savedSidResult}, function() {
                 console.log("saved sid " + savedSidResult);
+                });
+            chrome.storage.local.set({'type': requestType}, function() {     
+                console.log("saved request type " + requestType)
                 });
             }
 
         const clearCache = function() {
             saved = false;
+            requestType = '';
             chrome.storage.local.clear(function() {
                 var error = chrome.runtime.lastError;
                 if (error) {
@@ -150,10 +209,11 @@ $(function(){
                     $('#how_many').empty();
                     $('#sid_result').val("").empty();
                 });
-            }
+            };
 
-})
+        const clearHowMany = function() {
+            $('#temp').remove();
+            $('#how_many').empty();
+            };
 
-// regex to grab sids
-// (?<=CA)[A-Za-z0-9]{32}
-// (?<=SM)[A-Za-z0-9]{32}
+});
