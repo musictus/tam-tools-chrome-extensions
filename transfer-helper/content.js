@@ -1,4 +1,4 @@
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
     
     if (request.findSids == "didNumbers"){
         
@@ -9,12 +9,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
         let numberString = [];
         let newString = [];
 
-            for (var i = 0; i < array.length; i++) {
+            for (let i = 0; i < array.length; i++) {
                 if (/\S/.test(array[i])) {
                     numberString.push($.trim(array[i]))
                     }
                 }
-            for (var i = 0; i < numberString.length; i++) {
+            for (let i = 0; i < numberString.length; i++) {
                 newString.push("+" + numberString[i].replace(/[^0-9]/g, "").toString().split(',').join('\n'))
                 }
         
@@ -49,22 +49,22 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
         let arrayZdForCal = [];
         let removeDupesZdForCal = [];
 
-        const bu = function() {
+        const bu = ()=> {
             arrayBu = [...search.matchAll(regexBu)];
             let newArrayBu = arrayBu.map(i => 'BU' + i);
             removeDupesBu = [...new Set(newArrayBu)];
             }
-        const ad = function() {
+        const ad = ()=> {
             arrayAd = [...search.matchAll(regexAd)];
             let newArrayAd = arrayAd.map(i => 'AD' + i);
             removeDupesAd = [...new Set(newArrayAd)];
             }     
-        const ac = function() {
+        const ac = ()=> {
             arrayAc = [...search.matchAll(regexAc)];
             let newArrayAc = arrayAc.map(i => 'AC' + i);
             removeDupesAc = [...new Set(newArrayAc)];
             }
-        const fromAc = function() {
+        const fromAc = ()=> {
             arrayFromAc = [...search.matchAll(regexFromAc)];
             let newArrayFromAc = arrayFromAc.map(i => 'AC' + i);
             removeDupesFromAc = [...new Set(newArrayFromAc)];
@@ -73,7 +73,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
                 console.log("from_ac storage " + lastFromAc);
                 });
             }
-        const toAc = function() {
+        const toAc = ()=> {
             arrayToAc = [...search.matchAll(regexToAc)];
             let newArrayToAc = arrayToAc.map(i => 'AC' + i);
             removeDupesToAc = [...new Set(newArrayToAc)];
@@ -82,7 +82,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
                 console.log("to_ac storage " + lastToAc);
                 });
             }
-        const zd = function() {
+        const zd = ()=> {
             arrayZd = [...searchZd.matchAll(regexZd)];
             removeDupesZd = [...new Set(arrayZd)];
             let lastArrayZd = arrayZd.toString().split(',').join('\n');
@@ -90,7 +90,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
                 console.log("zd storage " + lastArrayZd);
                 });
             }
-        const zdForCal = function() {
+        const zdForCal = ()=> {
             arrayZdForCal = [...search.matchAll(regexZdForCal)];
             removeDupesZdForCal = [...new Set(arrayZdForCal)];
             let lastArrayZd = arrayZdForCal.toString().split(',').join('\n');
@@ -98,16 +98,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
                 console.log("zd storage " + lastArrayZd);
                 });
             }
-        const all = function() {
+        const all = ()=> {
             let combinedArray = removeDupesBu.concat(removeDupesAd, removeDupesAc);
             chrome.runtime.sendMessage({from: "sid", sid: combinedArray});
             }
-        const allWithFromTo = function() {
+        const allWithFromTo = ()=> {
             let combinedArray = removeDupesBu.concat(removeDupesAd, removeDupesFromAc, removeDupesToAc);
             chrome.runtime.sendMessage({from: "sidWithFromTo", sid: combinedArray});
             }
 
-        chrome.storage.local.get(['calendar'],function(is){
+        chrome.storage.local.get(['calendar'],(is)=> {
             if (is.calendar === true){
                 // this means you're under https://calendar.google.com/*
                 bu()
@@ -126,7 +126,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
             });
 
     } else if (request.findSids == "insert!") {
-        chrome.storage.local.get(['did', 'from_ac', 'to_ac', 'ad', 'bu'],function(sid){
+        chrome.storage.local.get(['did', 'from_ac', 'to_ac', 'ad', 'bu'],(sid)=> {
             
             document.getElementById("fromAccount").value = sid.from_ac;
             document.getElementById("toAccount").value = sid.to_ac;

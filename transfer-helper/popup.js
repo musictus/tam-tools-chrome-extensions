@@ -1,6 +1,6 @@
-$(function(){
+$(()=> {
     // load saved data on popup
-    chrome.storage.local.get(['did', 'from_ac', 'to_ac', 'ad', 'bu', 'zd', 'date', 'timezone', 'calendar'],function(sid){
+    chrome.storage.local.get(['did', 'from_ac', 'to_ac', 'ad', 'bu', 'zd', 'date', 'timezone', 'calendar'],(sid)=> {
         $('#number_input').val(sid.did);
         $('#from_result').val(sid.from_ac);
         $('#to_result').val(sid.to_ac);
@@ -12,14 +12,14 @@ $(function(){
     });
     
     // all the clicks below
-    $('#grab_did').click(function(){  
+    $('#grab_did').click(()=>{  
         clearCacheDid();    
-        chrome.tabs.query({active:true, currentWindow: true}, function(tabs){
+        chrome.tabs.query({active:true, currentWindow: true}, (tabs)=> {
            chrome.tabs.sendMessage(tabs[0].id, {findSids: "didNumbers"});
             });
         });
     
-    $('#cleanit').click(function() {
+    $('#cleanit').click(()=> {
         let init_numbers = $('#number_input').val();
         let each_lines = init_numbers.split(/\n/);
         let numberString = [];
@@ -36,7 +36,7 @@ $(function(){
                     $('#number_input').val(newString.toString().split(',').join('\n'));
         })
     
-    $('#add_prefix').click(function() {
+    $('#add_prefix').click(()=> {
         let init_numbers = $('#number_input').val();
         let added_prefix = $('#prefix_input').val();
         let each_lines = init_numbers.split(/\n/);
@@ -54,38 +54,38 @@ $(function(){
                     $('#number_input').val(newString.toString().split(',').join('\n'));
         })
 
-    $('#grab_reg').click(function(){  
+    $('#grab_reg').click(()=> {  
         clearCacheSid();    
-        chrome.tabs.query({active:true, currentWindow: true}, function(tabs){
+        chrome.tabs.query({active:true, currentWindow: true}, (tabs)=> {
             chrome.tabs.sendMessage(tabs[0].id, {findSids: "regSids"});
             let url = tabs[0].url;
             console.log("Whats the URL? " + url);
             if (url.includes("https://calendar.google.com/calendar/") === true){
-                    chrome.storage.local.set({'calendar': true}, function() { 
+                    chrome.storage.local.set({'calendar': true}, ()=> { 
                         console.log("We are on the calendar page!") 
                     });
                 } else {
-                    chrome.storage.local.set({'calendar': false}, function() { 
+                    chrome.storage.local.set({'calendar': false}, ()=> { 
                         console.log("We are NOT on the calendar page!")
                     })
                 }
             });
         });
 
-    $('#copy1').click(function(){
+    $('#copy1').click(()=> {
         $('#number_input').select();
             document.execCommand('copy');
         });
 
-    $('#insert').click(function(){  
+    $('#insert').click(()=> {  
         chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
             chrome.tabs.sendMessage(tabs[0].id, {findSids: "insert!"});
             console.log("testing insert now")
             })
         });
 
-    $('#gsheet').click(function(){          
-        chrome.storage.local.get(['did', 'from_ac', 'to_ac', 'ad', 'bu', 'zd', 'date', 'timezone'],function(get){            
+    $('#gsheet').click(()=> {          
+        chrome.storage.local.get(['did', 'from_ac', 'to_ac', 'ad', 'bu', 'zd', 'date', 'timezone'], (get)=> {            
             let didForGsheet = get.did.replace(/[+]/g, '%2B').replace(/\n/g, '%0A');
             // console.log("test storage data: " + get.did, '\n', get.from_ac, '\n', get.to_ac, '\n', get.bu, '\n', get.ad, '\n', get.zd, '\n', get.date, '\n', didForGsheet)
             chrome.tabs.create({
@@ -103,27 +103,27 @@ $(function(){
             });
         })
 
-    $('#save').click(function(){  
+    $('#save').click(()=> {  
         save();    
         });
-    $('#save2').click(function(){  
+    $('#save2').click(()=> {  
         save();    
         });
 
-    $('#clear').click(function(){  
+    $('#clear').click(()=> {  
         clearCacheDid()
         clearCacheSid()  
         });
 
-    $('#open_transfer').click(function(){
+    $('#open_transfer').click(()=> {
             chrome.tabs.create({
                 url:"https://monkey.twilio.com/did/tools/transfer-numbers-v2",
                 selected:false
                 })
         });
 
-    $('#calendar').click(function(){
-        chrome.storage.local.get(['did', 'from_ac', 'to_ac', 'ad', 'bu', 'zd', 'date', 'timezone'],function(get){
+    $('#calendar').click(()=> {
+        chrome.storage.local.get(['did', 'from_ac', 'to_ac', 'ad', 'bu', 'zd', 'date', 'timezone'], (get)=> {
             let cleanDate = get.date.replace(/[-:]/g, '');
             let didForCal = get.did.replace(/[+]/g, '%2B').replace(/\n/g, '%0A');
 
@@ -146,9 +146,9 @@ $(function(){
     
     let sidResult = [];
     // listen for DIDs request
-    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
         if (request.finally == "the dids!"){
-            chrome.storage.local.get(['key'], function(result) {
+            chrome.storage.local.get(['key'], (result)=> {
                 for (var key in result) {
                     var obj = result[key]
                     }
@@ -158,7 +158,7 @@ $(function(){
                         $('#how_many').append( $('<span>').text("found " + obj.length + " DIDs"));
                         } else {
                             $('#number_input').val(lastResult);
-                            chrome.storage.local.set({'did': lastResult}, function() {
+                            chrome.storage.local.set({'did': lastResult}, ()=> {
                                 console.log("saved did " + lastResult);
                               });
                             $('#how_many').append($('<span id="temp">').text("found " + obj.length + " total DIDs"));
@@ -168,9 +168,9 @@ $(function(){
             }
         });
     // listen for SIDs request
-    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
         if (request.finally == "the sids!"){
-            chrome.storage.local.get(['key'], function(result) {
+            chrome.storage.local.get(['key'], (result)=> {
                 for (var key in result) {
                     var obj = result[key]
                     }
@@ -182,10 +182,10 @@ $(function(){
                     let lastArrayAd = arrayAd.toString().split(',').join('\n');
                     let lastArrayAc = arrayAc.toString().split(',').join('\n');
 
-                    chrome.storage.local.set({'from_ac': lastArrayAc}, function() { console.log("from ac storage " + lastArrayAc) });
-                    chrome.storage.local.set({'to_ac': lastArrayAc}, function() { console.log("to ac storage " + lastArrayAc) });
-                    chrome.storage.local.set({'bu': lastArrayBu}, function() { console.log("bu storage " + lastArrayBu) });
-                    chrome.storage.local.set({'ad': lastArrayAd}, function() { console.log("ad storage " + lastArrayAd) });
+                    chrome.storage.local.set({'from_ac': lastArrayAc}, ()=> { console.log("from ac storage " + lastArrayAc) });
+                    chrome.storage.local.set({'to_ac': lastArrayAc}, ()=> { console.log("to ac storage " + lastArrayAc) });
+                    chrome.storage.local.set({'bu': lastArrayBu}, ()=> { console.log("bu storage " + lastArrayBu) });
+                    chrome.storage.local.set({'ad': lastArrayAd}, ()=> { console.log("ad storage " + lastArrayAd) });
 
                     if (obj.length === 0) {
                         $('#how_many').append( $('<span>').text("found " + obj.length + " DIDs"));
@@ -194,7 +194,7 @@ $(function(){
                             $('#to_result').val(lastArrayAc);
                             $('#bu_result').val(lastArrayBu);
                             $('#ad_result').val(lastArrayAd);
-                                chrome.storage.local.get(['zd'],function(id){
+                                chrome.storage.local.get(['zd'],(id)=> {
                                     $('#zd_id').val(id.zd);
                                 });
                             $('#how_many').append($('<span id="temp">').text("found " + obj.length + " total SIDs"));
@@ -203,7 +203,7 @@ $(function(){
 
             } else if (request.finally == "the sids for calendar!"){
 
-                chrome.storage.local.get(['key'], function(result) {
+                chrome.storage.local.get(['key'], (result)=> {
                     for (var key in result) {
                         var obj = result[key]
                         }
@@ -220,7 +220,7 @@ $(function(){
                             } else {
                                 $('#bu_result').val(lastArrayBu);
                                 $('#ad_result').val(lastArrayAd);
-                                    chrome.storage.local.get(['from_ac', 'to_ac', 'zd'],function(id){
+                                    chrome.storage.local.get(['from_ac', 'to_ac', 'zd'],(id)=> {
                                         $('#zd_id').val(id.zd);
                                         $('#from_result').val(id.from_ac);
                                         $('#to_result').val(id.to_ac);
@@ -231,7 +231,7 @@ $(function(){
                 }
         });
         // function for SAVE button
-        const save = function() {
+        const save = ()=> {
             let savedDid = $('#number_input').val();
             let savedFromAc = $('#from_result').val().replace(/\r?\n|\r/,'');
             let savedToAc = $('#to_result').val().replace(/\r?\n|\r/,'');
@@ -241,18 +241,18 @@ $(function(){
             let savedDate = $('#due_date').val();
             let savedTimeZone = $('#timezone').val();
 
-                chrome.storage.local.set({'did': savedDid}, function() { console.log("saved did " + savedDid) });
-                chrome.storage.local.set({'from_ac': savedFromAc}, function() { console.log("saved from ac " + savedFromAc) });
-                chrome.storage.local.set({'to_ac': savedToAc}, function() { console.log("saved to ac " + savedToAc) });
-                chrome.storage.local.set({'bu': savedBu}, function() { console.log("saved bu " + savedBu) });
-                chrome.storage.local.set({'ad': savedAd}, function() { console.log("saved ad " + savedAd) });
-                chrome.storage.local.set({'zd': savedZd}, function() { console.log("saved zd " + savedZd) });
-                chrome.storage.local.set({'date': savedDate}, function() { console.log("saved date " + savedDate) });
-                chrome.storage.local.set({'timezone': savedTimeZone}, function() { console.log("saved timezone " + savedTimeZone) });
+                chrome.storage.local.set({'did': savedDid}, ()=> { console.log("saved did " + savedDid) });
+                chrome.storage.local.set({'from_ac': savedFromAc}, ()=> { console.log("saved from ac " + savedFromAc) });
+                chrome.storage.local.set({'to_ac': savedToAc}, ()=> { console.log("saved to ac " + savedToAc) });
+                chrome.storage.local.set({'bu': savedBu}, ()=> { console.log("saved bu " + savedBu) });
+                chrome.storage.local.set({'ad': savedAd}, ()=> { console.log("saved ad " + savedAd) });
+                chrome.storage.local.set({'zd': savedZd}, ()=> { console.log("saved zd " + savedZd) });
+                chrome.storage.local.set({'date': savedDate}, ()=> { console.log("saved date " + savedDate) });
+                chrome.storage.local.set({'timezone': savedTimeZone}, ()=> { console.log("saved timezone " + savedTimeZone) });
             }
         // function for CLEAR button (DID section)
-        const clearCacheDid = function() {
-            chrome.storage.local.clear(function() {
+        const clearCacheDid = ()=> {
+            chrome.storage.local.clear(()=> {
                 var error = chrome.runtime.lastError;
                 if (error) {
                     console.error(error);
@@ -264,8 +264,8 @@ $(function(){
                 });
             }
         // function for CLEAR button (SID section)
-        const clearCacheSid = function() {
-            chrome.storage.local.clear(function() {
+        const clearCacheSid = ()=> {
+            chrome.storage.local.clear(()=> {
                 var error = chrome.runtime.lastError;
                 if (error) {
                     console.error(error);
