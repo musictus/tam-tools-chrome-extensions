@@ -2,7 +2,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
     
     if (request.findSids == "didNumbers"){
         
-        let regexp = /[ ]([\+][0-9]{1,3}([ \.\-])?)?([\(]{1}[0-9]{3}[\)])?([0-9 \.\-]{1,12})|^(([+][(]?[0-9]{1,3}[)]?)|([(]?[0-9]{4}[)]?))\s*[)]?[-\s\.]?[(]?[0-9]{1,3}[)]?([-\s\.]?[0-9]{3})([-\s\.]?[0-9]{3,4})|[0-9]{3}[- ().]*[0-9]{3}[- ().][0-9]{4}|[+1]*[0-9]{10}/gm;
+        let regexp = /([\+][0-9]{1,3}([ \.\-])?)?([\(]{1}[0-9]{3}[\)])?([0-9 \.\-]{1,12})|^(([+][(]?[0-9]{1,3}[)]?)|([(]?[0-9]{4}[)]?))\s*[)]?[-\s\.]?[(]?[0-9]{1,3}[)]?([-\s\.]?[0-9]{3})([-\s\.]?[0-9]{3,4})|[0-9]{3}[- ().]*[0-9]{3}[- ().][0-9]{4}|[+1]*[0-9]{10}/gm;
         let search = document.body.innerText;
         let matchedString = [...search.matchAll(regexp)];
         let array = matchedString.toString().split(',').filter(word => word.length > 10);
@@ -19,6 +19,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
                 }
         
         let filteredNewString = newString.filter(word => word.length > 10)
+        // to filter additional elements
+        // filteredNewString = filteredNewString.filter(numbers => numbers !== "+13173710811");
+        // filteredNewString = filteredNewString.filter(numbers => numbers !== "+34682783263");
         let removeDupes = [...new Set(filteredNewString)];    
         chrome.runtime.sendMessage({from: "did", did: removeDupes});
 

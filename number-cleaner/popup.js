@@ -1,34 +1,34 @@
-$(function(){
-    chrome.storage.local.get(['did'],function(found){
+$(()=> {
+    chrome.storage.local.get(['did'], (found)=> {
         $('#number_input').val(found.did);
     });
 
-    $('#grab_did').click(function(){  
+    $('#grab_did').click(()=> {  
         clearCache();    
-        chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
+        chrome.tabs.query({active:true,currentWindow: true}, (tabs)=> {
             chrome.tabs.sendMessage(tabs[0].id, {findSids: "didNumbers"});
             });
         });
 
-    $('#cleanit').click(function() {
+    $('#cleanit').click(()=> {
         
         let init_numbers = $('#number_input').val();
         let each_lines = init_numbers.split(/\n/);
         let numberString = [];
         let newString = [];
 
-        for (var i=0; i < each_lines.length; i++) {
+        for (let i = 0; i < each_lines.length; i++) {
             if (/\S/.test(each_lines[i])) {
                 numberString.push($.trim(each_lines[i]))
                 }
             }
-            for (var i = 0; i < numberString.length; i++) {
+            for (let i = 0; i < numberString.length; i++) {
                 newString.push("+" + numberString[i].replace(/[^0-9]/g, ""))
                 }
                     $('#number_input').val(newString.toString().split(',').join('\n'));
         })
     
-    $('#add_prefix').click(function() {
+    $('#add_prefix').click(()=> {
 
         let init_numbers = $('#number_input').val();
         let added_prefix = $('#prefix_input').val();
@@ -36,33 +36,51 @@ $(function(){
         let numberString = [];
         let newString = [];
 
-        for (var i=0; i < each_lines.length; i++) {
+        for (let i = 0; i < each_lines.length; i++) {
             if (/\S/.test(each_lines[i])) {
                 numberString.push($.trim(each_lines[i]))
                 }
             }
-            for (var i = 0; i < numberString.length; i++) {
+            for (let i = 0; i < numberString.length; i++) {
                 newString.push("+" + added_prefix + numberString[i].replace(/[^0-9]/g, ""))
                 }
                     $('#number_input').val(newString.toString().split(',').join('\n'));
         })
     
-    $('#copy1').click(function(){
+    $('#open_tab').click(()=> {
+        let textAreaValue = $('#number_input').val();
+        chrome.storage.local.set({'did': textAreaValue}, ()=>{ console.log("saved whilte opening Tab! " + textAreaValue)});  
+        let didForUrl = textAreaValue.replace(/[+]/g, '%2B');
+        let valueToArr = didForUrl.split(/\n/)  
+        let didResult = [];
+                
+                for (let i = 0; i < valueToArr.length; i++) {
+                    if (/\S/.test(valueToArr[i])) {
+                        didResult.push($.trim(valueToArr[i]));
+                        chrome.tabs.create({
+                            url:"https://monkey.twilio.com/search?q=" + didResult[i],
+                            selected: false  // We open the tab in the background
+                            })
+                        }
+                    }
+        });
+    
+    $('#copy1').click(()=> {
         $('#number_input').select();
         document.execCommand('copy');
         });
 
-    $('#save').click(function(){  
+    $('#save').click(()=> {  
         save();    
         });
     
-    $('#clear').click(function(){  
+    $('#clear').click(()=> {  
         clearCache()
         });
 
-    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
         if (request.finally == "the dids!"){
-            chrome.storage.local.get(['key'], function(result) {
+            chrome.storage.local.get(['key'], (result)=>{
                 for (var key in result) {
                     var obj = result[key]
                     }
@@ -72,7 +90,7 @@ $(function(){
                         $('#how_many').append( $('<span>').text("found " + obj.length + " DIDs"));
                         } else {
                             $('#number_input').val(lastResult);
-                            chrome.storage.local.set({'did': lastResult}, function() {
+                            chrome.storage.local.set({'did': lastResult}, ()=> {
                                 console.log("saved did " + lastResult);
                               });
                             $('#how_many').append($('<span id="temp">').text("found " + obj.length + " total DIDs"));
@@ -82,15 +100,15 @@ $(function(){
             }
         });
 
-    const save = function() {
+    const save = ()=> {
         let savedDid = $('#number_input').val();
-        chrome.storage.local.set({'did': savedDid}, function() {
+        chrome.storage.local.set({'did': savedDid}, ()=> {
             console.log("saved did " + savedDid);
             });
         }
 
-    const clearCache = function() {
-        chrome.storage.local.clear(function() {
+    const clearCache = ()=> {
+        chrome.storage.local.clear(()=> {
             var error = chrome.runtime.lastError;
             if (error) {
                 console.error(error);
