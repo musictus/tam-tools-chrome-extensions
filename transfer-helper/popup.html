@@ -7,6 +7,7 @@
         <script src="popup.js"></script>
     </head>
     <body>
+        <h2>Transfer Helper 🔢</h2>
         <h6>
             <form>
                 <input type="button" id="grab_did" value="☎️  Grab DIDs"/>
@@ -20,21 +21,44 @@
             </form><br>
             <form>
                 <input type="button" id="grab_reg" value="🔍  Grab SIDs"/><br>
-                <label for="enter_from">From AC</label><br>
+                <label for="enter_from">From</label>
                 <textarea id="from_result" rows="3" cols="40"></textarea><br>
-                <label for="enter_to">To AC</label><br>
+                <label for="enter_to">To</label>
                 <textarea id="to_result" rows="3" cols="40"></textarea><br>
-                <label for="enter_bu">BU</label><br>
+                <label for="enter_bu">BU</label>
                 <textarea id="bu_result" rows="2" cols="40"></textarea><br>
-                <label for="enter_ad">AD</label><br>
+                <label for="enter_ad">AD</label>
                 <textarea id="ad_result" rows="2" cols="40"></textarea><br>
                 <input type="button" id="save" value="💾 SAVE"/>
-                <input type="button" id="clear" value="🧽 CLEAR"/><br>
+                <input type="button" id="clear" value="🧽 CLEAR"/>
+                <label for="zendesk">Ticket ID</label>
+                <textarea id="zd_id" rows="1" cols="12" placeholder="Zendesk ID"></textarea><br>
             </form><br>
+            <form>
+                <label for="monkey">Monkey</label>
                 <input type="button" id="open_transfer" value="🙉 Open"/>
                 <input type="button" id="insert" value="✏️ Insert"/>
+            </form><br>
+            <form>
+                <label for="due_date">Due Date</label>
+                <input type="datetime-local" id="due_date"><br>
+                <label for="time_zone">Time Zone</label>
+                    <select id="timezone">
+                        <option value="America/New_York">Africa/Johannesburg</option>
+                        <option value="America/Bogota">America/Bogota</option>
+                        <option value="America/Denver">America/Denver</option>
+                        <option value="America/Los_Angeles">America/Los_Angeles</option>
+                        <option value="America/New_York">America/New_York</option>
+                        <option value="Asia/Kolkata">Asia/Kolkata</option>
+                        <option value="Asia/Singapore">Asia/Singapore</option>
+                        <option value="Asia/Tokyo">Asia/Tokyo</option>
+                        <option value="Europe/London">Europe/London</option>
+                        <option value="Europe/Madrid">Europe/Madrid</option>
+                    </select>
+                </form><br>
+                <input type="button" id="save2" value="💾 SAVE"/>
                 <input type="button" id="gsheet" value="➡️ GSheet"/>
-                <textarea id="zd_id" rows="1" cols="8" placeholder="Zendesk ID"></textarea>
+                <input type="button" id="calendar" value="🗓 Calendar"/>
         </h6>
         <h6 id="how_many"></h6>
     </body>
