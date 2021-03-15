@@ -1,4 +1,4 @@
-$(function(){
+$(()=>{
 
     let sidResult = [];
     let savedSidResult = '';
@@ -6,59 +6,59 @@ $(function(){
     let requestType = '';
 
     // get data from storage on initial load
-    chrome.storage.local.get(['sid', 'type'],function(found){
+    chrome.storage.local.get(['sid', 'type'], (found)=>{
         $('#sid_result').val(found.sid);
         found.type = requestType;
     });
 
     // grab related clicks
-    $('#grab_ca').click(function(){
+    $('#grab_ca').click(()=>{
         clearCache();    
-        chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
+        chrome.tabs.query({active:true,currentWindow: true}, (tabs)=>{
            chrome.tabs.sendMessage(tabs[0].id, {findSids: "callSids"});
             });
         // save request type
         requestType = 'CA';
-        chrome.storage.local.set({'type': requestType}, function() {     
+        chrome.storage.local.set({'type': requestType}, ()=>{     
             console.log("saved request type " + requestType)
             });
         });
 
-    $('#grab_sm').click(function(){
+    $('#grab_sm').click(()=>{
         clearCache();      
-        chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
+        chrome.tabs.query({active:true,currentWindow: true}, (tabs)=>{
         chrome.tabs.sendMessage(tabs[0].id, {findSids: "msgSids"});
             });
         // save request type
         requestType = 'SM';
-        chrome.storage.local.set({'type': requestType}, function() {     
+        chrome.storage.local.set({'type': requestType}, ()=> {     
             console.log("saved request type " + requestType)
             });
         });
 
-    $('#grab_reg').click(function(){  
+    $('#grab_reg').click(()=>{  
         clearCache();    
-        chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
+        chrome.tabs.query({active:true,currentWindow: true}, (tabs)=>{
         chrome.tabs.sendMessage(tabs[0].id, {findSids: "regSids"});
             });
         // save request type
         requestType = '';
-        chrome.storage.local.set({'type': requestType}, function() {     
+        chrome.storage.local.set({'type': requestType}, ()=> {     
             console.log("saved request type " + requestType)
             });
         });
 
-    $('#copy1').click(function(){
+    $('#copy1').click(()=>{
             $('#sid_result').select();
             document.execCommand('copy');
         });
 
-    $('#open_tab').click(function(){
+    $('#open_tab').click(()=>{
             let textAreaValue = $('#sid_result').val();
             let valueToArr = textAreaValue.split(/\n/)
-            chrome.storage.local.set({'sid': textAreaValue}, function(){ console.log("saved whilte opening Tab! " + textAreaValue)});     
+            chrome.storage.local.set({'sid': textAreaValue}, ()=>{ console.log("saved whilte opening Tab! " + textAreaValue)});     
                     
-                    for (var i=0; i < valueToArr.length; i++) {
+                    for (let i = 0; i < valueToArr.length; i++) {
                         if (/\S/.test(valueToArr[i])) {
                             sidResult.push($.trim(valueToArr[i]));
                             chrome.tabs.create({
@@ -69,22 +69,22 @@ $(function(){
                         }
         });
     
-    $('#save').click(function(){  
+    $('#save').click(()=>{  
         save();    
         });
     
-    $('#clear').click(function(){  
+    $('#clear').click(()=>{  
         clearCache()
         });
     
-    $('#kibana').click(function(){
+    $('#kibana').click(()=>{
         let textAreaValue = $('#sid_result').val();
         let valueToArr = textAreaValue.split(/\n/)
-        chrome.storage.local.set({'sid': textAreaValue}, function(){ console.log("saved while opening Kibana! " + textAreaValue)});
+        chrome.storage.local.set({'sid': textAreaValue}, ()=>{ console.log("saved while opening Kibana! " + textAreaValue)});
 
-        chrome.storage.local.get(['type'],function(found){
+        chrome.storage.local.get(['type'], (found)=>{
             if (found.type === 'CA') {
-                for (var i = 0; i < valueToArr.length; i++) {
+                for (let i = 0; i < valueToArr.length; i++) {
                     if (/\S/.test(valueToArr[i])) {
                         sidResult.push($.trim(valueToArr[i]));
                         chrome.tabs.create({
@@ -94,7 +94,7 @@ $(function(){
                         }
                     }
             } else if (found.type === 'SM') {
-                for (var i = 0; i < valueToArr.length; i++) {
+                for (let i = 0; i < valueToArr.length; i++) {
                     if (/\S/.test(valueToArr[i])) {
                         sidResult.push($.trim(valueToArr[i]));
                         chrome.tabs.create({
@@ -107,8 +107,8 @@ $(function(){
             })
         });
     
-    $('#open_cops').click(function(){
-        chrome.storage.local.get(['type'],function(found){
+    $('#open_cops').click(()=>{
+        chrome.storage.local.get(['type'],(found)=>{
             if (found.type === 'CA') {
                 chrome.tabs.create({
                     url:"https://monkey.twilio.com/cops-dashboard/#/voice/query-sids",
@@ -126,26 +126,26 @@ $(function(){
             })
         });
 
-        $('#insert').click(function(){  
-            chrome.storage.local.get(['type'],function(found){
+        $('#insert').click(()=>{  
+            chrome.storage.local.get(['type'], (found)=>{
                 if (found.type === 'CA') {
                     console.log("CA working on pop!");
-                    chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
+                    chrome.tabs.query({active:true,currentWindow: true}, (tabs)=>{
                         chrome.tabs.sendMessage(tabs[0].id, {findSids: "insert_CA"});
                         });
                 } else if (found.type === 'SM') {
                         console.log("SM working on pop!")
-                        chrome.tabs.query({active:true,currentWindow: true}, function(tabs){
+                        chrome.tabs.query({active:true,currentWindow: true}, (tabs)=>{
                             chrome.tabs.sendMessage(tabs[0].id, {findSids: "insert_SM"});
                             });
                         }
                     })
             });
 
-    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse)=>{
         if (request.finally == "the sids!"){
-            chrome.storage.local.get(['key'], function(result) {
-                for (var key in result) {
+            chrome.storage.local.get(['key'], (result)=>{
+                for (let key in result) {
                     var obj = result[key]
                     }
                 sidResult = obj
@@ -154,7 +154,7 @@ $(function(){
                         $('#how_many').append( $('<span>').text("found " + obj.length + " SIDs"));
                         } else {
                             $('#sid_result').val(lastResult);
-                            chrome.storage.local.set({'sid': lastResult}, function() {
+                            chrome.storage.local.set({'sid': lastResult}, ()=>{
                                 console.log("saved sids " + lastResult);
                               });
                             $('#how_many').append($('<span id="temp">').text("found " + obj.length + " total SIDs"));
@@ -164,22 +164,22 @@ $(function(){
             }
         });
 
-        const save = function() {
+        const save = ()=>{
             saved = true;
             savedSidResult = $('#sid_result').val();
-            chrome.storage.local.set({'sid': savedSidResult}, function() {
+            chrome.storage.local.set({'sid': savedSidResult}, ()=>{
                 console.log("saved sid " + savedSidResult);
                 });
-            chrome.storage.local.set({'type': requestType}, function() {     
+            chrome.storage.local.set({'type': requestType}, ()=>{     
                 console.log("saved request type " + requestType)
                 });
             }
 
-        const clearCache = function() {
+        const clearCache = ()=>{
             saved = false;
             requestType = '';
-            chrome.storage.local.clear(function() {
-                var error = chrome.runtime.lastError;
+            chrome.storage.local.clear(()=>{
+                let error = chrome.runtime.lastError;
                 if (error) {
                     console.error(error);
                     }
@@ -189,7 +189,7 @@ $(function(){
                 });
             };
 
-        const clearHowMany = function() {
+        const clearHowMany = ()=>{
             $('#temp').remove();
             $('#how_many').empty();
             };
