@@ -1,14 +1,14 @@
 $(()=> {
     // load saved data on popup
-    chrome.storage.local.get(['did', 'from_ac', 'to_ac', 'ad', 'bu', 'zd', 'date', 'timezone', 'calendar'],(sid)=> {
-        $('#number_input').val(sid.did);
-        $('#from_result').val(sid.from_ac);
-        $('#to_result').val(sid.to_ac);
-        $('#bu_result').val(sid.bu);
-        $('#ad_result').val(sid.ad);
-        $('#zd_id').val(sid.zd);
-        $('#due_date').val(sid.date);
-        $("#timezone option[value='" + sid.timezone + "']").attr("selected","selected");
+    chrome.storage.local.get(['did', 'from_ac', 'to_ac', 'ad', 'bu', 'zd', 'date', 'timezone', 'calendar', 'currentUrl'],(get)=> {
+        $('#number_input').val(get.did);
+        $('#from_result').val(get.from_ac);
+        $('#to_result').val(get.to_ac);
+        $('#bu_result').val(get.bu);
+        $('#ad_result').val(get.ad);
+        $('#zd_id').val(get.zd);
+        $('#due_date').val(get.date);
+        $("#timezone option[value='" + get.timezone + "']").attr("selected","selected");
     });
     
     // all the clicks below
@@ -59,6 +59,9 @@ $(()=> {
         chrome.tabs.query({active:true, currentWindow: true}, (tabs)=> {
             chrome.tabs.sendMessage(tabs[0].id, {findSids: "regSids"});
             let url = tabs[0].url;
+                chrome.storage.local.set({'currentUrl': url}, ()=> { 
+                    console.log("URL Saved"); 
+                    });
             console.log("Whats the URL? " + url);
             if (url.includes("https://calendar.google.com/calendar/") === true){
                     chrome.storage.local.set({'calendar': true}, ()=> { 
@@ -194,8 +197,13 @@ $(()=> {
                             $('#to_result').val(lastArrayAc);
                             $('#bu_result').val(lastArrayBu);
                             $('#ad_result').val(lastArrayAd);
-                                chrome.storage.local.get(['zd'],(id)=> {
-                                    $('#zd_id').val(id.zd);
+                                // chrome.storage.local.get(['zd'],(id)=> {
+                                //     $('#zd_id').val(id.zd);
+                                // });
+                                chrome.storage.local.get(['currentUrl'],(get)=> {
+                                    let zdId = get.currentUrl.replace(/https:\/\/twilio\.zendesk\.com\/agent\/tickets\//g, '');
+                                    $('#zd_id').val(zdId);
+                                    chrome.storage.local.set({'zd': zdId}, ()=> { console.log("ZD ID storage " + zdId) });
                                 });
                             $('#how_many').append($('<span id="temp">').text("found " + obj.length + " total SIDs"));
                             }
@@ -233,8 +241,8 @@ $(()=> {
         // function for SAVE button
         const save = ()=> {
             let savedDid = $('#number_input').val();
-            let savedFromAc = $('#from_result').val().replace(/\r?\n|\r/,'');
-            let savedToAc = $('#to_result').val().replace(/\r?\n|\r/,'');
+            let savedFromAc = $('#from_result').val();
+            let savedToAc = $('#to_result').val();
             let savedBu = $('#bu_result').val().replace(/\r?\n|\r/,'');
             let savedAd = $('#ad_result').val().replace(/\r?\n|\r/,'');
             let savedZd = $('#zd_id').val().replace(/\r?\n|\r/,'');

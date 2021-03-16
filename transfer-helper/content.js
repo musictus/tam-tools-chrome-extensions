@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
         // regexFromAc and regexToAc only works under https://calendar.google.com/*
         let regexFromAc = /(?<=:From:AC)[A-Za-z0-9]{32}/g;
         let regexToAc = /(?<=:To:AC)[A-Za-z0-9]{32}/g;
-        let regexZd = /(?<=Ticket\s#)[0-9]{7}/g;
+        // let regexZd = /(?<=Ticket\s#)[0-9]{7}/g;
         let regexZdForCal = /(?<=https:\/\/twilio\.zendesk\.com\/agent\/tickets\/)[0-9]{7}/g;
         let search = document.body.innerText;
         let searchZd = document.body.innerHTML;
@@ -85,14 +85,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
                 console.log("to_ac storage " + lastToAc);
                 });
             }
-        const zd = ()=> {
-            arrayZd = [...searchZd.matchAll(regexZd)];
-            removeDupesZd = [...new Set(arrayZd)];
-            let lastArrayZd = arrayZd.toString().split(',').join('\n');
-            chrome.storage.local.set({'zd': lastArrayZd}, function() {
-                console.log("zd storage " + lastArrayZd);
-                });
-            }
+        // const zd = ()=> {
+        //     arrayZd = [...searchZd.matchAll(regexZd)];
+        //     removeDupesZd = [...new Set(arrayZd)];
+        //     let lastArrayZd = arrayZd.toString().split(',').join('\n');
+        //     chrome.storage.local.set({'zd': lastArrayZd}, function() {
+        //         console.log("zd storage " + lastArrayZd);
+        //         });
+        //     }
         const zdForCal = ()=> {
             arrayZdForCal = [...search.matchAll(regexZdForCal)];
             removeDupesZdForCal = [...new Set(arrayZdForCal)];
@@ -123,7 +123,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse)=> {
                     bu()
                     ad()
                     ac()
-                    zd()
+                    // zd()
                     all()
                 }
             });
