@@ -141,7 +141,8 @@ $(()=>{
                         }
                     })
             });
-
+    
+    // listening to background.js
     chrome.runtime.onMessage.addListener((request, sender, sendResponse)=>{
         if (request.finally == "the sids!"){
             chrome.storage.local.get(['key'], (result)=>{
@@ -164,6 +165,7 @@ $(()=>{
             }
         });
 
+        // function to save
         const save = ()=>{
             saved = true;
             savedSidResult = $('#sid_result').val();
@@ -174,7 +176,8 @@ $(()=>{
                 console.log("saved request type " + requestType)
                 });
             }
-
+        
+        // function to clear cache
         const clearCache = ()=>{
             saved = false;
             requestType = '';
